@@ -1,0 +1,62 @@
+# Hybrid Training Configuration: Online GRPO with Dataset Opponents
+# Stage 3 of multi-paradigm training pipeline
+
+model:
+  name_or_path: "Qwen/Qwen3-4B-Instruct-2507"
+  lora_r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  lora_target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+
+debate:
+  num_turns: 4
+  positions:
+    - "FOR"
+    - "AGAINST"
+  max_tokens_per_turn: 512
+  plan_max_tokens: 192
+
+judge:
+  judge_type: "local"
+  local_model_path: "AtlaAI/Selene-1-Mini-Llama-3.1-8B"
+  temperature: 0.3
+  max_tokens: 500
+  belief_scale: 100
+
+reward:
+  outcome_weight: 1.0
+  for_win_bonus: 1.5
+  critic_weight: 0.3
+  belief_weight: 0.2
+  diversity_weight: 0.1
+  format_weight: 0.05
+  normalize_per_component: true
+
+training:
+  num_epochs: 3
+  batch_size: 2
+  num_trajectories: 4
+  learning_rate: 1.0e-5
+  warmup_ratio: 0.05
+  weight_decay: 0.01
+  max_grad_norm: 1.0
+  beta: 0.1
+  epsilon: 0.2
+  randomize_roles: true
+  randomize_start: true
+  use_amp: true
+  use_wandb: false
+  log_every: 10
+  eval_every: 100
+  save_every: 200
+
+loss_type: "grpo"
+paradigm: "hybrid"
+arena_data_dir: "data/debate-arena"

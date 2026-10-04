@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.env
+.env.*
+outputs/
+wandb/
+data/debate-arena/
+*.pt
+*.safetensors
+*.bin
