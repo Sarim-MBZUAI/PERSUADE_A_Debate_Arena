@@ -145,7 +145,7 @@ footer { padding: 32px 0 48px; color: var(--muted); font-size: .85rem; text-alig
 
   <div class="stats">
     <div class="stat"><b>13,726</b><small>ten-turn debates over 259 calibrated, topic-disjoint topics</small></div>
-    <div class="stat"><b>1,358 → 1,572</b><small>held-out Elo of the Qwen3-4B student after SFT + DPO, above Qwen3-32B (1,534)</small></div>
+    <div class="stat"><b>+214 Elo</b><small>Qwen3-4B student after SFT + DPO (1,358 → 1,572), above same-family models up to 8× its size</small></div>
     <div class="stat"><b>r = 0.93</b><small>rank agreement between the GPT-5.2 and Claude Opus 4.6 judges; humans agree with GPT-5.2 on 82% of debates</small></div>
     <div class="stat"><b>19.4% → 74.0%</b><small>share of debates in which the student uses a taxonomy-defined unethical strategy</small></div>
   </div>
@@ -153,8 +153,8 @@ footer { padding: 32px 0 48px; color: var(--muted); font-size: .85rem; text-alig
   <section>
     <h2>Abstract</h2>
     <div class="abstract">
-      <p>Persuasion is a dual-use capability: the same skill that lets a model argue a case well also lets it mislead. PERSUADE is a debate arena that measures, trains and audits the persuasive capability of language models under a single protocol. Six open-weight models from 4B to 1T parameters compete in 13,726 ten-turn debates over 259 calibrated topics, split 193/7/59 into topic-disjoint train, dev and test sets. A judge model, GPT-5.2, selects the more persuasive side, and outcomes are aggregated into Bradley-Terry Elo ratings. The rankings agree with a second judge, Claude Opus 4.6 (r = 0.93), and a human panel agrees with GPT-5.2 on 82% of 100 held-out debates.</p>
-      <p>The arena transcripts then serve as training data. A Qwen3-4B student is trained with SFT, and with GRPO and DPO starting from the same SFT checkpoint. The strongest variant, SFT + DPO, rises from 1,358 to 1,572 Elo on held-out topics, above Qwen3-14B and Qwen3-32B. Finally, every turn is audited against the 40-strategy persuasion taxonomy of Zeng et al. (2024). The share of debates in which the student uses a taxonomy-defined unethical strategy rises from 19.4% to above 68% in the strongest variants. Removing flagged debates from training lowers it to 31.4% but drops the student to 989 Elo, below an equal-size random control at 1,403 Elo. Judged persuasiveness and unethical strategy use rise together, so trained models should be audited for strategy use alongside performance.</p>
+      <p>Large language models increasingly shape beliefs and decisions in negotiation, health communication, and political messaging. Yet there is no standard way to measure persuasive capability, train it, or detect when it turns manipulative. We introduce PERSUADE, a debate arena for benchmarking, optimizing, and auditing persuasion under one protocol. Six open-weight models from 4B to 1T parameters compete in 13,726 ten-turn debates over 259 topics, and a judge model selects the more persuasive side as the winner. Rankings are consistent across two independent judges (r = 0.93), and a human panel agrees with the primary judge on 82% of 100 held-out debates. Within a model family, persuasiveness scales with size, but across families the training recipe matters as much as scale.</p>
+      <p>To study persuasive transfer, we train a Qwen3-4B student and compare SFT with GRPO and DPO stages built on the same SFT checkpoint. The strongest variant gains 214 Elo on held-out topics and surpasses same-family models up to 8× its size. Concerningly, fine-tuning also amplifies the model's use of unethical persuasion techniques, such as misrepresentation and false information, increasing from 19.4% to above 68% in the strongest variants. Removing audit-flagged debates from training cuts this rate to 31.4% but reduces the student's Elo substantially. We release our source code, including the evaluation harness, training recipes, and audit protocol, to support reproducible and responsible persuasion research.</p>
     </div>
   </section>
 
@@ -213,18 +213,24 @@ footer { padding: 32px 0 48px; color: var(--muted); font-size: .85rem; text-alig
     <div class="two">
       <figure>
         <img src="static/images/elo_gpt52.png" alt="Bradley-Terry Elo ratings with GPT-5.2 as judge for the arena opponents and all Qwen3-4B variants.">
-        <figcaption>Held-out Elo, GPT-5.2 judge. The SFT + DPO student (1,572) passes Qwen3-14B and Qwen3-32B (1,534) and sits just below GLM-4.7 (1,581); Kimi-K2 leads at 1,909.</figcaption>
+        <figcaption>Held-out Bradley-Terry Elo, GPT-5.2 judge. Grey bars are arena opponents, blue the untrained Qwen3-4B, red its fine-tuned variants. SFT + DPO (1,572) passes Qwen3-14B and Qwen3-32B (1,534) and sits just below GLM-4.7 (1,581); Kimi-K2 leads at 1,909.</figcaption>
       </figure>
       <figure>
         <img src="static/images/elo_opus.png" alt="Bradley-Terry Elo ratings with Claude Opus 4.6 as an independent judge.">
-        <figcaption>Same debates re-judged by Claude Opus 4.6. The ordering of the student variants and opponents is largely preserved (r = 0.93).</figcaption>
+        <figcaption>Held-out Elo with Claude Opus 4.6 as judge. Kimi-K2 remains strongest and every trained variant except Non-Deceptive SFT stays above the untrained base; the main shift is GLM-4.7 falling from second to tenth.</figcaption>
       </figure>
     </div>
 
     <h3>Persuasiveness and unethical strategy use rise together</h3>
     <figure>
       <img src="static/images/deception_vs_elo.png" alt="Scatter plot of unethical-strategy rate against Elo for all opponents and student variants, with a positive trend line.">
-      <figcaption>Unethical-strategy rate (taxonomy strategies 32 to 40) against Elo under the GPT-5.2 judge. Fine-tuned students cluster at high Elo and high strategy rate; the non-deceptive SFT run lowers the rate to 31.4% but falls to 989 Elo.</figcaption>
+      <figcaption>Held-out Elo (GPT-5.2 judge) against the unethical-strategy rate, the share of a model's debates in which the audit flags at least one of the nine unethical strategies. Diamonds are the Qwen3-4B student and its fine-tuned variants; circles are the arena opponents. The dashed line is a linear fit (r = 0.57).</figcaption>
+    </figure>
+
+    <h3>Targeted training closes much of the model-size gap</h3>
+    <figure>
+      <img src="static/images/elo_vs_size.png" alt="Three panels: prior work treats training, debate and auditing separately; PERSUADE closes the loop of benchmark, optimize, audit and iterate; held-out Elo against model size shows fine-tuned Qwen3-4B variants reaching Qwen3-14B and Qwen3-32B.">
+      <figcaption>Held-out Elo (GPT-5.2 judge) against nominal parameter count on a log scale. Fine-tuned Qwen3-4B variants approach or exceed Qwen3-14B and Qwen3-32B, while Kimi-K2 remains the strongest arena model. Cross-family comparisons are descriptive because architectures and active parameter counts differ.</figcaption>
     </figure>
   </section>
 
