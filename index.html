@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PERSUADE</title>
+<meta name="description" content="PERSUADE: A Debate Arena for Benchmarking, Optimizing, and Auditing Persuasion in Language Models.">
+<meta property="og:title" content="PERSUADE: A Debate Arena for Benchmarking, Optimizing, and Auditing Persuasion in Language Models">
+<meta property="og:description" content="One debate protocol that measures, trains and audits the persuasive capability of language models.">
+<meta property="og:image" content="static/images/framework.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fbfaf8; --surface: #ffffff; --text: #1d1d1f; --muted: #5f6368; --line: #e4e2dd;
+  --accent: #a8382c; --accent-2: #2f5d8c; --accent-3: #3f7a3a; --chip: #f1efea; --figure-bg: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141517; --surface: #1c1d20; --text: #e9e7e3; --muted: #a2a5ab; --line: #2e3034;
+    --accent: #e0796b; --accent-2: #8cb4dc; --accent-3: #8cc585; --chip: #26282c; --figure-bg: #f4f3f0;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141517; --surface: #1c1d20; --text: #e9e7e3; --muted: #a2a5ab; --line: #2e3034;
+  --accent: #e0796b; --accent-2: #8cb4dc; --accent-3: #8cc585; --chip: #26282c; --figure-bg: #f4f3f0;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font: 16px/1.65 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+a { color: var(--accent-2); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.wrap { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+header { padding: 64px 0 32px; text-align: center; }
+h1 {
+  font-family: "Source Serif 4", Georgia, serif; font-weight: 600;
+  font-size: clamp(1.7rem, 4.2vw, 2.6rem); line-height: 1.2; margin: 0 auto 24px; max-width: 820px;
+}
+h1 .name { color: var(--accent); }
+.authors { font-size: 1.05rem; margin: 0 0 6px; }
+.authors a { color: var(--text); border-bottom: 1px solid var(--line); }
+.authors a:hover { border-color: var(--accent-2); text-decoration: none; color: var(--accent-2); }
+.authors span { white-space: nowrap; margin: 0 8px; display: inline-block; }
+.affil { color: var(--muted); font-size: .92rem; margin: 0 0 4px; }
+.affil a { color: var(--muted); }
+.links { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 24px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; border-radius: 999px;
+  background: var(--text); color: var(--bg); font-weight: 500; font-size: .95rem;
+}
+.btn:hover { text-decoration: none; opacity: .85; }
+.btn svg { width: 18px; height: 18px; fill: currentColor; }
+.btn.soon { background: var(--chip); color: var(--muted); cursor: default; border: 1px solid var(--line); }
+.btn.soon:hover { opacity: 1; }
+main section { margin: 40px 0; }
+h2 {
+  font-family: "Source Serif 4", Georgia, serif; font-weight: 600; font-size: 1.6rem;
+  margin: 0 0 16px; text-align: center;
+}
+h3 { font-size: 1.05rem; margin: 24px 0 8px; }
+p { margin: 0 0 14px; }
+.abstract { max-width: 760px; margin: 0 auto; text-align: justify; hyphens: auto; }
+figure { margin: 20px 0; }
+figure img {
+  width: 100%; height: auto; display: block; background: var(--figure-bg);
+  border-radius: 10px; padding: 12px; border: 1px solid var(--line);
+}
+figcaption { color: var(--muted); font-size: .9rem; margin-top: 10px; text-align: center; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 8px 0 8px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.stat b { display: block; font-size: 1.45rem; font-family: "Source Serif 4", Georgia, serif; color: var(--accent); }
+.stat small { color: var(--muted); font-size: .85rem; line-height: 1.4; display: block; }
+.stages { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.stage { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; }
+.stage h3 { margin-top: 0; }
+.stage ul { margin: 0; padding-left: 18px; }
+.stage li { margin-bottom: 6px; font-size: .95rem; }
+.s1 h3 { color: var(--accent-2); } .s2 h3 { color: var(--accent-3); } .s3 h3 { color: var(--accent); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+.two figure { margin: 0; }
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 8px 0 4px; }
+table { border-collapse: collapse; width: 100%; font-size: .9rem; font-variant-numeric: tabular-nums; }
+th, td { padding: 7px 10px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+thead th { font-weight: 600; border-bottom: 2px solid var(--text); }
+tr.ours td { font-weight: 600; background: var(--chip); }
+tr.group td { border-top: 2px solid var(--line); }
+.note { color: var(--muted); font-size: .88rem; }
+.warn {
+  max-width: 760px; margin: 0 auto; background: var(--surface); border: 1px solid var(--line);
+  border-left: 4px solid var(--accent); border-radius: 10px; padding: 16px 20px;
+}
+pre {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px;
+  overflow-x: auto; font: .85rem/1.55 "JetBrains Mono", ui-monospace, monospace; margin: 0;
+}
+.bib { position: relative; }
+.copy {
+  position: absolute; top: 10px; right: 10px; border: 1px solid var(--line); background: var(--chip);
+  color: var(--text); border-radius: 6px; padding: 4px 10px; font: 500 .8rem Inter, sans-serif; cursor: pointer;
+}
+footer { padding: 32px 0 48px; color: var(--muted); font-size: .85rem; text-align: center; border-top: 1px solid var(--line); }
+.theme {
+  position: fixed; top: 14px; right: 14px; width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid var(--line); background: var(--surface); color: var(--text); cursor: pointer; font-size: 1rem;
+}
+@media (max-width: 720px) {
+  header { padding-top: 56px; }
+  .stats { grid-template-columns: 1fr 1fr; }
+  .stages, .two { grid-template-columns: 1fr; }
+  .abstract { text-align: left; }
+  figure img { padding: 6px; }
+}
+</style>
+</head>
+<body>
+<button class="theme" id="theme" aria-label="Toggle colour theme">◐</button>
+
+<header class="wrap">
+  <h1><span class="name">PERSUADE</span>: A Debate Arena for Benchmarking, Optimizing, and Auditing Persuasion in Language Models</h1>
+  <p class="authors">
+    <span><a href="https://sarim-mbzuai.github.io/">Sarim Hashmi</a></span>
+    <span><a href="https://seppia978.github.io/">Samuele Poppi</a></span>
+    <span><a href="https://lahlou.org/">Salem Lahlou</a></span>
+    <span><a href="https://mtakac.com/">Martin Takáč</a></span>
+    <span><a href="https://mishrakshitij.github.io/">Kshitij Mishra</a></span>
+    <span><a href="https://nilslukas.github.io/">Nils Lukas</a></span>
+  </p>
+  <p class="affil"><a href="https://mbzuai.ac.ae/">Mohamed bin Zayed University of Artificial Intelligence (MBZUAI)</a></p>
+  <div class="links">
+    <span class="btn soon"><svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm8 1.5V8h4.5L14 3.5zM8 12h8v1.5H8V12zm0 3.5h8V17H8v-1.5z"/></svg>arXiv (soon)</span>
+    <a class="btn" href="https://github.com/Sarim-MBZUAI/PERSUADE_A_Debate_Arena"><svg viewBox="0 0 24 24"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.19-3.08-.12-.3-.52-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.74.11 3.04.74.8 1.19 1.83 1.19 3.08 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>Code</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <figure>
+    <img src="static/images/framework.png" alt="PERSUADE pipeline: calibrate and split topics, run the debate arena, build exact-context training data, train a Qwen3-4B student, evaluate on held-out topics with a speaker-specific strategy audit.">
+    <figcaption>One topic-disjoint protocol. 1,000 candidate propositions are calibrated to 259 topics; six open-weight models debate pairwise for ten turns under anonymised judging; the transcripts build exact-context SFT, DPO and GRPO data for a Qwen3-4B student; held-out evaluation reports judged performance and a speaker-attributed strategy audit separately.</figcaption>
+  </figure>
+
+  <div class="stats">
+    <div class="stat"><b>13,726</b><small>ten-turn debates over 259 calibrated, topic-disjoint topics</small></div>
+    <div class="stat"><b>1,358 → 1,572</b><small>held-out Elo of the Qwen3-4B student after SFT + DPO, above Qwen3-32B (1,534)</small></div>
+    <div class="stat"><b>r = 0.93</b><small>rank agreement between the GPT-5.2 and Claude Opus 4.6 judges; humans agree with GPT-5.2 on 82% of debates</small></div>
+    <div class="stat"><b>19.4% → 74.0%</b><small>share of debates in which the student uses a taxonomy-defined unethical strategy</small></div>
+  </div>
+
+  <section>
+    <h2>Abstract</h2>
+    <div class="abstract">
+      <p>Persuasion is a dual-use capability: the same skill that lets a model argue a case well also lets it mislead. PERSUADE is a debate arena that measures, trains and audits the persuasive capability of language models under a single protocol. Six open-weight models from 4B to 1T parameters compete in 13,726 ten-turn debates over 259 calibrated topics, split 193/7/59 into topic-disjoint train, dev and test sets. A judge model, GPT-5.2, selects the more persuasive side, and outcomes are aggregated into Bradley-Terry Elo ratings. The rankings agree with a second judge, Claude Opus 4.6 (r = 0.93), and a human panel agrees with GPT-5.2 on 82% of 100 held-out debates.</p>
+      <p>The arena transcripts then serve as training data. A Qwen3-4B student is trained with SFT, and with GRPO and DPO starting from the same SFT checkpoint. The strongest variant, SFT + DPO, rises from 1,358 to 1,572 Elo on held-out topics, above Qwen3-14B and Qwen3-32B. Finally, every turn is audited against the 40-strategy persuasion taxonomy of Zeng et al. (2024). The share of debates in which the student uses a taxonomy-defined unethical strategy rises from 19.4% to above 68% in the strongest variants. Removing flagged debates from training lowers it to 31.4% but drops the student to 989 Elo, below an equal-size random control at 1,403 Elo. Judged persuasiveness and unethical strategy use rise together, so trained models should be audited for strategy use alongside performance.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Framework</h2>
+    <div class="stages">
+      <div class="stage s1">
+        <h3>Benchmark</h3>
+        <ul>
+          <li>259 topics kept from 1,000 candidates where a stronger reference model wins from both stances.</li>
+          <li>Six open-weight models, 4B to 1T parameters, debate pairwise for ten turns with randomised stance and opening.</li>
+          <li>GPT-5.2 judges anonymised transcripts; outcomes become Bradley-Terry Elo ratings.</li>
+          <li>Robustness: second judge (Claude Opus 4.6), human calibration, topic bootstrap confidence intervals.</li>
+        </ul>
+      </div>
+      <div class="stage s2">
+        <h3>Training</h3>
+        <ul>
+          <li>Train-topic transcripts only; the student never sees a test topic.</li>
+          <li>Exact-context guarantee: SFT demos, DPO pairs and GRPO candidate groups share the same prompt, topic, stance and dialogue prefix.</li>
+          <li>Qwen3-4B student trained with SFT, then SFT + GRPO and SFT + DPO from the same checkpoint, plus a Base + GRPO control.</li>
+          <li>Offline GRPO uses the known behaviour policy and stored token log-probabilities.</li>
+        </ul>
+      </div>
+      <div class="stage s3">
+        <h3>Audit</h3>
+        <ul>
+          <li>Each model's own turns are labelled with the 40-strategy taxonomy of Zeng et al. (2024): 31 ethical, 9 taxonomy-defined unethical.</li>
+          <li>Reported as the unethical-strategy rate, the share of debates with at least one flagged turn.</li>
+          <li>A filtered corpus with flagged debates removed, and an equal-size random control, test whether training can avoid them.</li>
+          <li>Performance and audit are reported separately; the association is descriptive, not causal.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Results</h2>
+    <h3>Held-out Qwen3-4B variants, GPT-5.2 judge</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Qwen3-4B variant</th><th>Win rate % [95% CI]</th><th>Elo [95% CI]</th><th>Unethical-strategy rate</th></tr></thead>
+        <tbody>
+          <tr><td>Base</td><td>21.9 [17.6, 27.0]</td><td>1358 [1300, 1418]</td><td>19.4%</td></tr>
+          <tr><td>Base + LoRA GRPO</td><td>26.7 [22.0, 32.0]</td><td>1407 [1345, 1470]</td><td>16.8%</td></tr>
+          <tr class="group"><td>SFT + Online GRPO</td><td>39.5 [34.1, 45.2]</td><td>1518 [1455, 1585]</td><td>68.3%</td></tr>
+          <tr><td>SFT + GRPO</td><td>43.1 [37.6, 48.8]</td><td>1545 [1480, 1610]</td><td>71.8%</td></tr>
+          <tr><td>Distill SFT</td><td>42.9 [37.4, 48.6]</td><td>1551 [1485, 1618]</td><td>77.2%</td></tr>
+          <tr class="ours"><td>SFT + DPO</td><td>46.4 [40.8, 52.1]</td><td>1572 [1510, 1640]</td><td>74.0%</td></tr>
+          <tr class="group"><td>Non-deceptive SFT (flagged debates removed)</td><td>—</td><td>989</td><td>31.4%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Win-rate intervals are Wilson intervals; Elo intervals come from bootstrapping held-out topics. The equal-size random control for the non-deceptive run reaches 1,403 Elo.</p>
+
+    <div class="two">
+      <figure>
+        <img src="static/images/elo_gpt52.png" alt="Bradley-Terry Elo ratings with GPT-5.2 as judge for the arena opponents and all Qwen3-4B variants.">
+        <figcaption>Held-out Elo, GPT-5.2 judge. The SFT + DPO student (1,572) passes Qwen3-14B and Qwen3-32B (1,534) and sits just below GLM-4.7 (1,581); Kimi-K2 leads at 1,909.</figcaption>
+      </figure>
+      <figure>
+        <img src="static/images/elo_opus.png" alt="Bradley-Terry Elo ratings with Claude Opus 4.6 as an independent judge.">
+        <figcaption>Same debates re-judged by Claude Opus 4.6. The ordering of the student variants and opponents is largely preserved (r = 0.93).</figcaption>
+      </figure>
+    </div>
+
+    <h3>Persuasiveness and unethical strategy use rise together</h3>
+    <figure>
+      <img src="static/images/deception_vs_elo.png" alt="Scatter plot of unethical-strategy rate against Elo for all opponents and student variants, with a positive trend line.">
+      <figcaption>Unethical-strategy rate (taxonomy strategies 32 to 40) against Elo under the GPT-5.2 judge. Fine-tuned students cluster at high Elo and high strategy rate; the non-deceptive SFT run lowers the rate to 31.4% but falls to 989 Elo.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2>Responsible use</h2>
+    <div class="warn">
+      <p>Persuasion is a dual-use capability. Our results show that higher judged persuasiveness is associated with more taxonomy-defined unethical strategies, so trained models should be audited for strategy use alongside persuasive performance. The released code reports both quantities separately and treats their association as descriptive, not causal.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>BibTeX</h2>
+    <div class="bib">
+      <button class="copy" id="copy">Copy</button>
+<pre id="bibtex">@misc{hashmi2026persuade,
+  title  = {PERSUADE: A Debate Arena for Benchmarking, Optimizing, and Auditing Persuasion in Language Models},
+  author = {Hashmi, Sarim and Poppi, Samuele and Lahlou, Salem and Tak{\'a}{\v{c}}, Martin and Mishra, Kshitij and Lukas, Nils},
+  year   = {2026}
+}</pre>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">PERSUADE · <a href="https://mbzuai.ac.ae/">MBZUAI</a> · <a href="https://github.com/Sarim-MBZUAI/PERSUADE_A_Debate_Arena/blob/main/LICENSE">MIT License</a></footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  try { var saved = localStorage.getItem("theme"); if (saved) root.setAttribute("data-theme", saved); } catch (e) {}
+  document.getElementById("theme").addEventListener("click", function () {
+    var dark = root.getAttribute("data-theme") === "dark" ||
+      (!root.getAttribute("data-theme") && matchMedia("(prefers-color-scheme: dark)").matches);
+    var next = dark ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("theme", next); } catch (e) {}
+  });
+  document.getElementById("copy").addEventListener("click", function () {
+    var btn = this;
+    navigator.clipboard.writeText(document.getElementById("bibtex").textContent).then(function () {
+      btn.textContent = "Copied"; setTimeout(function () { btn.textContent = "Copy"; }, 1500);
+    });
+  });
+})();
+</script>
+</body>
+</html>
