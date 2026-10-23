@@ -51,6 +51,10 @@ Rankings under Claude Opus 4.6 as an independent judge:
 
 ![Elo ratings, Claude Opus 4.6 judge](assets/elo_opus.png)
 
+Targeted training closes much of the model-size gap (held-out Elo against parameter count):
+
+![Elo against model size](assets/elo_vs_size.png)
+
 ## Installation
 
 ```bash
